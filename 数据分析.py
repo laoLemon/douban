@@ -1,3 +1,5 @@
+import re
+
 from wordcloud import WordCloud
 # 读取文本
 def csvwc(movie):
@@ -42,6 +44,8 @@ def csvwc(movie):
     # 保存词云文件
     wc.to_file('img.jpg')
 
+
+
 import matplotlib.pyplot as plt
 import csv
 
@@ -60,6 +64,7 @@ def get_quarter(date):
     else:
         return "第四季度"
 
+
 def datechart(movie):
     date_index = 3
     counts = {}
@@ -69,9 +74,21 @@ def datechart(movie):
         csvreader = csv.reader(csvfile)
         for row in csvreader:
             comment_content = row[date_index]
-            month, day = comment_content.split("月")
-            day = day.replace("日", "")
-            counts[f"{month}/{day}"] = counts.get(f"{month}/{day}", 0) + 1
+
+            # 处理包含日期格式的情况
+            if "-" in comment_content:
+                month, day = comment_content.split("-")
+                counts[f"{month}/{day}"] = counts.get(f"{month}/{day}", 0) + 1
+            # 处理包含月份和日期的情况
+            else:
+                # 提取月份和日期信息
+                match = re.search(r'(\d{1,2})月(\d{1,2})日', comment_content)
+                if match:
+                    month = match.group(1)
+                    day = match.group(2)
+                    counts[f"{month}/{day}"] = counts.get(f"{month}/{day}", 0) + 1
+                else:
+                    print("影评内容不包含日期或月份信息，无法处理:", comment_content)
 
     # 将统计结果按日期排序
     items = sorted(counts.items(), key=lambda x: (int(x[0].split('/')[0]), int(x[0].split('/')[1])))
@@ -103,8 +120,31 @@ def datechart(movie):
     plt.title('影评数量随时间变化图')  # 设置标题
     plt.xticks(x_ticks, x_labels, rotation=45)  # 设置 x 轴刻度并旋转标签
     plt.tight_layout()  # 调整布局，避免标签重叠
+    #plt.show()  # 显示图表
+    return plt
 
-    plt.show()  # 显示图表
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+def plot_bar_chart_from_csv(file_path):
+
+    # 读取CSV文件
+    df = pd.read_csv(file_path, encoding="ANSI")
+
+    # 选择日期索引对应的列，并计算各个评分的频率
+    rating_counts = df.iloc[:, 1].value_counts().sort_index()
+
+    # 绘制树状图
+    plt.figure(figsize=(8, 6))
+    plt.bar(rating_counts.index, rating_counts.values)
+    plt.title('Rating Distribution')
+    plt.xlabel('Rating')
+    plt.ylabel('Count')
+    plt.xticks(range(1, 6))  # 设置X轴刻度为评分1到5
+    plt.grid(axis='y')  # 添加水平方向的网格线
+
     return plt
 
 
@@ -115,6 +155,7 @@ if __name__ == '__main__':
     movie2022 = "2022长津湖.csv"
     movie2021 = "2021唐人街3.csv"
     movie2019 = "2019流浪地球.csv"
-    #csvwc('./csv/clean/' + movie2023)
-    datechart('./csv/clean/'+movie2024)
+    #datechart('./csv/clean/'+movie2019)
 
+    #plot = plot_bar_chart_from_csv("./csv/clean/"+movie2024)
+    #plot.show()
