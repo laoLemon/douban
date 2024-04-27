@@ -76,7 +76,7 @@ def analyze_reviews(csv_file_path, stopwords=stopwords, threshold=100):
 
     # 输出每个类别中的特征词及其出现次数与总次数之比（按比例从高到低排序）
     for rating, class_words in classes.items():
-        print(f"类{rating}:")
+        # print(f"类{rating}:")
         class_word_ratios = []
         for word in class_words:
             count_in_class = dimensions[rating].get(word, 0)
@@ -87,13 +87,13 @@ def analyze_reviews(csv_file_path, stopwords=stopwords, threshold=100):
         for word, ratio in class_word_ratios:
             count_in_class = dimensions[rating].get(word, 0)
             total_count = total_word_counts[word]
-            print(f"{word}: {count_in_class}/{total_count} ({ratio:.2f})")
-        print()
+            # print(f"{word}: {count_in_class}/{total_count} ({ratio:.2f})")
+        # print()
 
     # 输出每个类别中的特征词表
-    for rating, class_words in classes.items():
+    '''for rating, class_words in classes.items():
         print(f"特征类{rating}：")
-        print(", ".join(class_words))
+        print(", ".join(class_words))'''
 
     return classes
 
@@ -141,14 +141,14 @@ def find_high_freq_words_by_rating(csv_file_path, target_rating, stopwords=[], t
 
 
 # 示例
-classes = analyze_reviews("./csv/merged_file.csv", stopwords=stopwords)
+classes = analyze_reviews("../csv/merged_file.csv", stopwords=stopwords)
 # 添加高频词到特征类1中
 classes[1].extend(['垃圾', '玩意', '恶心', '难看', '烂片', '侮辱', '浪费', '营销', '油腻'])
 classes[2].extend(['low', '法庭', '两星', '探案', '猥琐', '植入', '妻夫', '莫名其妙', '低俗', '广告', '失望', '密室', '雅美', '侦探', '系列', '油腻', '长泽', '浪费'])
-classes[3].extend(['相对', '及格', '之外', '勉强', '不少', '前半段', '特色', '是否', '35', '影子'])
+#classes[3].extend(['相对', '及格', '之外', '勉强', '不少', '前半段', '特色', '是否', '35', '影子'])
 classes[4].extend(['钢七连', '年代', '解决', '记忆', '先辈', '祖国', '总体', '优点', '超越', '千里', '惨烈', '四星', '致敬', '生命', '预期', '杜乐莹', '家庭'])
 classes[5].extend(['勇气', '五星', '低分', '苹果', '心情', '女孩', '女人', '梦想', '牛蛙', '不再', '眼泪', '乐莹', '满分', '评论', '万岁', '支持', '找到', '朋友', '破防', '强大', '标准', '震撼', '样子'])
 target_rating = 4
 threshold = 10
-high_freq_words = find_high_freq_words_by_rating("./csv/merged_file.csv", target_rating, stopwords=[""], threshold=threshold)
-print("High-frequency words for rating", target_rating, ":", high_freq_words)
+high_freq_words = find_high_freq_words_by_rating("../csv/merged_file.csv", target_rating, stopwords=[""], threshold=threshold)
+# print("High-frequency words for rating", target_rating, ":", high_freq_words)
